@@ -48,6 +48,8 @@ class LambdaTranslator
             piExp = "";
             String Exp = Expressions.get(n);
 
+            System.out.println("Successfully read string: " + Exp);
+
             Exp = HandleParenthesis(Exp);
             
             Node head = new Node();
@@ -60,7 +62,6 @@ class LambdaTranslator
             
             //Exp = ReadLambdaExpression("SampleExp.txt");
         
-            System.out.println("Successfully read string: " + Exp);
         
             System.out.println("Storing in tree ....");
         
@@ -104,7 +105,7 @@ class LambdaTranslator
         int endPtr=Exp.length();
         
         
-        while(true)
+        while(Exp.contains("("))
         {
             ptr = Exp.indexOf("(",ptr);
             
@@ -112,8 +113,8 @@ class LambdaTranslator
             
             if(endPtr+2<=Exp.length())
             {
-                System.out.println("endptr="+endPtr);
-                System.out.println("Substring =" +Exp.substring(endPtr,endPtr+2));
+             //   System.out.println("endptr="+endPtr);
+              //  System.out.println("Substring =" +Exp.substring(endPtr,endPtr+2));
                 String temp = CheckParen(Exp.substring(endPtr, endPtr+2));
                 if(temp.length()>0)
                 {
@@ -126,9 +127,9 @@ class LambdaTranslator
             }
             else {
                 endPtr=Exp.lastIndexOf(")",endPtr);
-                System.out.println("here");
+                //System.out.println("here");
             }
-            System.out.println(Exp);
+            //System.out.println(Exp);
             
             Match = CheckParen(Exp);
             
