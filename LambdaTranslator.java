@@ -48,6 +48,8 @@ class LambdaTranslator
             piExp = "";
             String Exp = Expressions.get(n);
 
+            Exp = HandleParenthesis(Exp);
+            
             Node head = new Node();
             System.out.println("--------------------- \n");
             ascii = 65;
@@ -70,6 +72,71 @@ class LambdaTranslator
             
         }
 
+    }
+    
+    public static String CheckParen(String Exp)
+    {
+        String Match;
+        
+        String pattern = "\\)[a-zA-Z]";
+        
+        Pattern r = Pattern.compile(pattern);
+        
+        Matcher m = r.matcher(Exp);
+        if (m.find()) {
+            //System.out.println(m.group(0));
+            Match = m.group(0);
+            
+        } else {
+            //System.out.println("No match found");
+            Match = "";
+        }
+        
+        return Match;
+        
+    }
+    
+    public static String HandleParenthesis(String Exp)
+    {
+        String Match= " ";
+        
+        int ptr=0;
+        int endPtr=Exp.length();
+        
+        
+        while(true)
+        {
+            ptr = Exp.indexOf("(",ptr);
+            
+            endPtr = Exp.lastIndexOf(")",endPtr);
+            
+            if(endPtr+2<=Exp.length())
+            {
+                System.out.println("endptr="+endPtr);
+                System.out.println("Substring =" +Exp.substring(endPtr,endPtr+2));
+                String temp = CheckParen(Exp.substring(endPtr, endPtr+2));
+                if(temp.length()>0)
+                {
+                    if (ptr > 0) ptr --;
+                    String tempExp = Exp.substring(0,ptr) + Exp.charAt(endPtr+1) + Exp.substring(ptr++, endPtr);
+                    if(endPtr+2<Exp.length())
+                        tempExp+=Exp.substring(endPtr+2, Exp.length());
+                    Exp = tempExp+")";
+                }
+            }
+            else {
+                endPtr=Exp.lastIndexOf(")",endPtr);
+                System.out.println("here");
+            }
+            System.out.println(Exp);
+            
+            Match = CheckParen(Exp);
+            
+            if(Match == "")
+                break;
+        }
+        
+        return Exp;
     }
 
     /*
