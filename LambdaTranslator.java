@@ -150,7 +150,7 @@ class LambdaTranslator
     {
         String Match;
         
-        String pattern = "L[a-z].[a-zA-Z]|[a-zA-Z][a-zA-Z]|[a-zA-Z]";
+        String pattern = "L[a-z]\\..|[a-zA-Z][a-zA-Z]|[a-zA-Z]";
         
         Pattern r = Pattern.compile(pattern);
         
