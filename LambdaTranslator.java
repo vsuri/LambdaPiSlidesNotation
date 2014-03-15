@@ -27,7 +27,7 @@ class LambdaTranslator
  //   public static Node head = new Node();
     public static String piExp = "";
     public static int ascii = 65;
-    
+    public static Node Current;
     public static ArrayList<String> Expressions = new ArrayList<String>();
     
     public static void main(String[] args)
@@ -49,8 +49,6 @@ class LambdaTranslator
             String Exp = Expressions.get(n);
 
             System.out.println("Successfully read string: " + Exp);
-
-            Exp = HandleParenthesis(Exp);
             
             Node head = new Node();
             System.out.println("--------------------- \n");
@@ -65,7 +63,8 @@ class LambdaTranslator
         
             System.out.println("Storing in tree ....");
         
-            AddToTree(Exp, head);
+            Current=head;
+            AddToTree(Exp);
         
             ConvertToPiSlides(head);
         
@@ -95,49 +94,6 @@ class LambdaTranslator
         
         return Match;
         
-    }
-    
-    public static String HandleParenthesis(String Exp)
-    {
-        String Match= " ";
-        
-        int ptr=0;
-        int endPtr=Exp.length();
-        
-        
-        while(Exp.contains("("))
-        {
-            ptr = Exp.indexOf("(",ptr);
-            
-            endPtr = Exp.lastIndexOf(")",endPtr);
-            
-            if(endPtr+2<=Exp.length())
-            {
-             //   System.out.println("endptr="+endPtr);
-              //  System.out.println("Substring =" +Exp.substring(endPtr,endPtr+2));
-                String temp = CheckParen(Exp.substring(endPtr, endPtr+2));
-                if(temp.length()>0)
-                {
-                    if (ptr > 0) ptr --;
-                    String tempExp = Exp.substring(0,ptr) + Exp.charAt(endPtr+1) + Exp.substring(ptr++, endPtr);
-                    if(endPtr+2<Exp.length())
-                        tempExp+=Exp.substring(endPtr+2, Exp.length());
-                    Exp = tempExp+")";
-                }
-            }
-            else {
-                endPtr=Exp.lastIndexOf(")",endPtr);
-                //System.out.println("here");
-            }
-            //System.out.println(Exp);
-            
-            Match = CheckParen(Exp);
-            
-            if(Match == "")
-                break;
-        }
-        
-        return Exp;
     }
 
     /*
@@ -218,33 +174,135 @@ class LambdaTranslator
     {
         String Match;
         
-        String pattern = "L[a-z]\\..|[a-zA-Z][a-zA-Z]|[a-zA-Z]";
-        
+        String pattern = "\\(^/\\(.+?^/\\)\\)";
+        /*
+        pattern = "L[a-z]\\..";
+        pattern = "[a-zA-Z][a-zA-Z]";
+        pattern = "[a-zA-Z]";
+        */
         Pattern r = Pattern.compile(pattern);
         
         Matcher m = r.matcher(Exp);
         if (m.find()) {
             //System.out.println(m.group(0));
             Match = m.group(0);
-            
-        } else {
-            //System.out.println("No match found");
-            Match = "";
         }
+        else{
+            pattern = "L[a-z]\\..";
+
+            r = Pattern.compile(pattern);
+            
+            m = r.matcher(Exp);
+            if (m.find()) {
+                //System.out.println("-----"+m.group(0));
+                Match = m.group(0);
+            }
+
+            else {
+                pattern = "[a-zA-Z]\\([a-zA-Z]\\)";
+
+                r = Pattern.compile(pattern);
+                
+                m = r.matcher(Exp);
+                
+
+                
+                if(m.find()){
+                    Match=m.group(0);
+                    Match=Match.replaceFirst("\\(","");
+                    Match=Match.replaceFirst("\\)","");
+                    System.out.println("Match = "+Match);
+                }
+            
         
+        else
+        {
+            pattern = "\\([a-zA-Z]\\)[a-zA-Z]";
+            r = Pattern.compile(pattern);
+            
+            m = r.matcher(Exp);
+            if(m.find()){
+                Match=m.group(0);
+                Match=Match.replaceFirst("\\(","");
+                Match=Match.replaceFirst("\\)","");
+                System.out.println("Match = "+Match);
+            }
+
+            else
+            {
+                pattern = "[a-zA-Z][a-zA-Z]";
+                r = Pattern.compile(pattern);
+                
+                m = r.matcher(Exp);
+                
+                if (m.find()) {
+                    //System.out.println("-----"+m.group(0));
+                    Match = m.group(0);
+                }
+                else
+                {
+                    pattern = "[a-zA-Z]";
+                    r = Pattern.compile(pattern);
+                    
+                    m = r.matcher(Exp);
+                    if (m.find()) {
+                        //System.out.println(m.group(0));
+                        Match = m.group(0);
+                    }
+                    else
+                    {
+                        Match = "";
+                        
+                    }
+                }
+            }
+        }
+        }
+        }
+        //System.out.println("Match = " + Match);
         return Match;
         
     }
     
-    public static void AddToTree(String Exp, Node Current)
+    public static void AddToTree(String Exp)
     {
-        //System.out.println("Expression = "+Exp);
+        System.out.println("Expression = "+Exp);
         //Check for expression
         String SubExp = CheckRegex(Exp);
         
         //Add expression to tree based on its category
+        // Handling parenthesis first
+        // x(yz)
+        
+        // SubExp = (yz)
+        if(SubExp.equals("") || SubExp.equals("( )"))
+        {
+            return;
+        }
+        else if(SubExp.charAt(0) == '('&& SubExp.charAt(SubExp.length()-1)==')')
+        {
+            /*Node tempNode = new Node(Current, (char)ascii, "_", 0);
+            ascii++;
+            Current.SetChildLeft(tempNode);
+            Current = tempNode;
+                       */ 
+            System.out.println("Subexp is " + SubExp + (SubExp.length()-1));
+            AddToTree(SubExp.substring(2,SubExp.length()-1));
+            /*
+            Node tempNode = new Node(Current, (char)ascii, "_", 0);
+            ascii++;
+            Current.SetChildRight(tempNode);
+             */
+            System.out.println("here:" + SubExp);
+            System.out.println("Exp = "+Exp);
+
+            Exp=Exp.replaceFirst("\\("+SubExp+"\\)", " ");
+            System.out.println("Exp after = "+Exp);
+
+            AddToTree(Exp);
+        }
         //Type 1
-        if(SubExp.length()==1)
+        else if(SubExp.length()==1)
         {                
             Node tempNode = new Node(Current, (char)ascii, ""+SubExp.charAt(0), 0);
             ascii++;
@@ -257,9 +315,9 @@ class LambdaTranslator
             else
                 Current.type = 3;
             
-            
+            System.out.println("SubExp 1 = "+SubExp+" type="+Current.type);
             Exp=Exp.replaceFirst(SubExp, " ");
-            AddToTree(Exp, Current);
+            AddToTree(Exp);
         }
         //Type 2
         else if(SubExp.length()==4 && SubExp.charAt(0)=='L' && SubExp.charAt(2)=='.')
@@ -278,7 +336,7 @@ class LambdaTranslator
             Current.type = 2;
             
             Exp=Exp.replaceFirst(SubExp.substring(0,2), " ");
-            AddToTree(Exp, Current);
+            AddToTree(Exp);
         }
         
         //Type 3
@@ -320,10 +378,19 @@ class LambdaTranslator
             
             //if(Character.isUpperCase(SubExp.charAt(0)))
             Current.type = 4;
-            
-            
-            Exp=Exp.replaceFirst(SubExp, " ");
-            AddToTree(Exp, Current);
+            if(Exp.contains(SubExp))
+                Exp=Exp.replaceFirst(SubExp, " ");
+            else if(Exp.contains(SubExp.charAt(0)+"("+SubExp.charAt(1)+")"))
+            {
+                String S = SubExp.charAt(0)+"\\("+SubExp.charAt(1)+"\\)";
+                Exp=Exp.replaceFirst(S," ");
+            }
+            else if(Exp.contains("("+SubExp.charAt(0)+")"+SubExp.charAt(1)))
+            {
+                String S = "\\("+SubExp.charAt(0)+"\\)"+SubExp.charAt(1);
+                Exp=Exp.replaceFirst(S," ");
+            }
+            AddToTree(Exp);
 
         }
 
