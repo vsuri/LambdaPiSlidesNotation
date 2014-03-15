@@ -211,7 +211,7 @@ class LambdaTranslator
                     Match=m.group(0);
                     Match=Match.replaceFirst("\\(","");
                     Match=Match.replaceFirst("\\)","");
-                    System.out.println("Match = "+Match);
+                    //System.out.println("Match = "+Match);
                 }
             
         
@@ -225,7 +225,7 @@ class LambdaTranslator
                 Match=m.group(0);
                 Match=Match.replaceFirst("\\(","");
                 Match=Match.replaceFirst("\\)","");
-                System.out.println("Match = "+Match);
+                //System.out.println("Match = "+Match);
             }
 
             else
@@ -266,7 +266,7 @@ class LambdaTranslator
     
     public static void AddToTree(String Exp)
     {
-        System.out.println("Expression = "+Exp);
+        //System.out.println("Expression = "+Exp);
         //Check for expression
         String SubExp = CheckRegex(Exp);
         
@@ -286,18 +286,18 @@ class LambdaTranslator
             Current.SetChildLeft(tempNode);
             Current = tempNode;
                        */ 
-            System.out.println("Subexp is " + SubExp + (SubExp.length()-1));
+           // System.out.println("Subexp is " + SubExp + (SubExp.length()-1));
             AddToTree(SubExp.substring(2,SubExp.length()-1));
             /*
             Node tempNode = new Node(Current, (char)ascii, "_", 0);
             ascii++;
             Current.SetChildRight(tempNode);
              */
-            System.out.println("here:" + SubExp);
-            System.out.println("Exp = "+Exp);
+            //System.out.println("here:" + SubExp);
+            //System.out.println("Exp = "+Exp);
 
             Exp=Exp.replaceFirst("\\("+SubExp+"\\)", " ");
-            System.out.println("Exp after = "+Exp);
+            //System.out.println("Exp after = "+Exp);
 
             AddToTree(Exp);
         }
@@ -315,7 +315,7 @@ class LambdaTranslator
             else
                 Current.type = 3;
             
-            System.out.println("SubExp 1 = "+SubExp+" type="+Current.type);
+            //System.out.println("SubExp 1 = "+SubExp+" type="+Current.type);
             Exp=Exp.replaceFirst(SubExp, " ");
             AddToTree(Exp);
         }
